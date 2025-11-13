@@ -4,12 +4,16 @@
 #include <string>
 #include "DriverSocket.h"
 
-class DriverStub {
+class DriverClientStub {
 private:
 	DriverSocket socket;
+	int id; 
+	std::string name;
 public:
-	DriverStub();
-	int Init(std::string ip, int port);
+	DriverClientStub();
+	int Init(std::string server_ip, int server_port);
+	int GetID();
+	std::string GetName();
 };
 
 
