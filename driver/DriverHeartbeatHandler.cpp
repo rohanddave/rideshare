@@ -12,14 +12,10 @@ void DriverHeartbeatHandler::HandleConnection(std::unique_ptr<ServerSocket> sock
 
 	while (true) {
 		// Receive heartbeat message
-		int bytes_received = socket->Recv(buffer, HeartbeatMessage::Size(), 0);
+		int result = socket->Recv(buffer, HeartbeatMessage::Size(), 0);
 
-		if (bytes_received != HeartbeatMessage::Size()) {
-			if (bytes_received == 0) {
-				std::cout << "[HeartbeatHandler " << connection_id << "] Driver disconnected" << std::endl;
-			} else {
-				std::cout << "[HeartbeatHandler " << connection_id << "] Error receiving heartbeat" << std::endl;
-			}
+		if (!result) {
+			std::cout << "[HeartbeatHandler " << connection_id << "] Driver disconnected or error receiving heartbeat" << std::endl;
 			break;
 		}
 

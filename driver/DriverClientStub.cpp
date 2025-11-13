@@ -40,9 +40,9 @@ bool DriverClientStub::SendHeartbeat() {
 
 	msg.Marshal(buffer);
 
-	int bytes_sent = heartbeat_socket.Send(buffer, HeartbeatMessage::Size(), 0);
+	int result = heartbeat_socket.Send(buffer, HeartbeatMessage::Size(), 0);
 
-	if (bytes_sent != HeartbeatMessage::Size()) {
+	if (!result) {
 		std::cout << "[Driver " << id << "] Failed to send heartbeat" << std::endl;
 		return false;
 	}
@@ -56,9 +56,9 @@ RideRequestMessage DriverClientStub::ReceiveRideRequest() {
 	RideRequestMessage msg;
 	char buffer[RideRequestMessage::Size()];
 
-	int bytes_received = request_socket.Recv(buffer, RideRequestMessage::Size(), 0);
+	int result = request_socket.Recv(buffer, RideRequestMessage::Size(), 0);
 
-	if (bytes_received != RideRequestMessage::Size()) {
+	if (!result) {
 		std::cout << "[Driver " << id << "] Failed to receive ride request or connection closed" << std::endl;
 		msg.request_id = -1;  // Indicate error
 		return msg;
@@ -78,9 +78,9 @@ bool DriverClientStub::SendAcknowledgment(int request_id, bool accepted) {
 
 	msg.Marshal(buffer);
 
-	int bytes_sent = request_socket.Send(buffer, AcknowledgmentMessage::Size(), 0);
+	int result = request_socket.Send(buffer, AcknowledgmentMessage::Size(), 0);
 
-	if (bytes_sent != AcknowledgmentMessage::Size()) {
+	if (!result) {
 		std::cout << "[Driver " << id << "] Failed to send acknowledgment" << std::endl;
 		return false;
 	}

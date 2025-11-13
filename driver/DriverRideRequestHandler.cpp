@@ -28,9 +28,9 @@ void DriverRideRequestHandler::HandleConnection(std::unique_ptr<ServerSocket> so
 	          << request.request_id << " to driver" << std::endl;
 
 	// Send ride request to driver
-	int bytes_sent = socket->Send(send_buffer, RideRequestMessage::Size(), 0);
+	int send_result = socket->Send(send_buffer, RideRequestMessage::Size(), 0);
 
-	if (bytes_sent != RideRequestMessage::Size()) {
+	if (!send_result) {
 		std::cout << "[RideRequestHandler " << connection_id << "] Failed to send ride request" << std::endl;
 		return;
 	}
@@ -40,9 +40,9 @@ void DriverRideRequestHandler::HandleConnection(std::unique_ptr<ServerSocket> so
 	// Wait for acknowledgment
 	AcknowledgmentMessage ack;
 	char recv_buffer[AcknowledgmentMessage::Size()];
-	int bytes_received = socket->Recv(recv_buffer, AcknowledgmentMessage::Size(), 0);
+	int recv_result = socket->Recv(recv_buffer, AcknowledgmentMessage::Size(), 0);
 
-	if (bytes_received != AcknowledgmentMessage::Size()) {
+	if (!recv_result) {
 		std::cout << "[RideRequestHandler " << connection_id << "] Failed to receive acknowledgment" << std::endl;
 		return;
 	}
