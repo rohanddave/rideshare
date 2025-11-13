@@ -36,10 +36,13 @@ int DriverClientStub::InitRequestConnection(std::string server_ip, int server_po
 
 bool DriverClientStub::SendHeartbeat() {
 	HeartbeatMessage msg(id, latitude, longitude);
+	char buffer[HeartbeatMessage::Size()];
 
-	int bytes_sent = heartbeat_socket.Send((char*)&msg, sizeof(HeartbeatMessage), 0);
+	msg.Marshal(buffer);
 
-	if (bytes_sent != sizeof(HeartbeatMessage)) {
+	int bytes_sent = heartbeat_socket.Send(buffer, HeartbeatMessage::Size(), 0);
+
+	if (bytes_sent != HeartbeatMessage::Size()) {
 		std::cout << "[Driver " << id << "] Failed to send heartbeat" << std::endl;
 		return false;
 	}
@@ -51,14 +54,17 @@ bool DriverClientStub::SendHeartbeat() {
 
 RideRequestMessage DriverClientStub::ReceiveRideRequest() {
 	RideRequestMessage msg;
+	char buffer[RideRequestMessage::Size()];
 
-	int bytes_received = request_socket.Recv((char*)&msg, sizeof(RideRequestMessage), 0);
+	int bytes_received = request_socket.Recv(buffer, RideRequestMessage::Size(), 0);
 
-	if (bytes_received != sizeof(RideRequestMessage)) {
+	if (bytes_received != RideRequestMessage::Size()) {
 		std::cout << "[Driver " << id << "] Failed to receive ride request or connection closed" << std::endl;
 		msg.request_id = -1;  // Indicate error
 		return msg;
 	}
+
+	msg.Unmarshal(buffer);
 
 	std::cout << "[Driver " << id << "] Received ride request #" << msg.request_id
 	          << " (pickup: " << msg.pickup_latitude << ", " << msg.pickup_longitude << ")" << std::endl;
@@ -68,10 +74,13 @@ RideRequestMessage DriverClientStub::ReceiveRideRequest() {
 
 bool DriverClientStub::SendAcknowledgment(int request_id, bool accepted) {
 	AcknowledgmentMessage msg(request_id, id, accepted);
+	char buffer[AcknowledgmentMessage::Size()];
 
-	int bytes_sent = request_socket.Send((char*)&msg, sizeof(AcknowledgmentMessage), 0);
+	msg.Marshal(buffer);
 
-	if (bytes_sent != sizeof(AcknowledgmentMessage)) {
+	int bytes_sent = request_socket.Send(buffer, AcknowledgmentMessage::Size(), 0);
+
+	if (bytes_sent != AcknowledgmentMessage::Size()) {
 		std::cout << "[Driver " << id << "] Failed to send acknowledgment" << std::endl;
 		return false;
 	}

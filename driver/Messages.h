@@ -1,6 +1,7 @@
 #ifndef __MESSAGES_H__
 #define __MESSAGES_H__
 
+#include <cstring>
 #include <ctime>
 
 // Message types
@@ -23,6 +24,32 @@ struct HeartbeatMessage {
 	HeartbeatMessage(int id, float lat, float lon)
 		: driver_id(id), latitude(lat), longitude(lon) {
 		timestamp = time(nullptr);
+	}
+
+	void Marshal(char *buffer) {
+		int offset = 0;
+		memcpy(buffer + offset, &driver_id, sizeof(int));
+		offset += sizeof(int);
+		memcpy(buffer + offset, &latitude, sizeof(float));
+		offset += sizeof(float);
+		memcpy(buffer + offset, &longitude, sizeof(float));
+		offset += sizeof(float);
+		memcpy(buffer + offset, &timestamp, sizeof(time_t));
+	}
+
+	void Unmarshal(char *buffer) {
+		int offset = 0;
+		memcpy(&driver_id, buffer + offset, sizeof(int));
+		offset += sizeof(int);
+		memcpy(&latitude, buffer + offset, sizeof(float));
+		offset += sizeof(float);
+		memcpy(&longitude, buffer + offset, sizeof(float));
+		offset += sizeof(float);
+		memcpy(&timestamp, buffer + offset, sizeof(time_t));
+	}
+
+	static constexpr int Size() {
+		return sizeof(int) + sizeof(float) + sizeof(float) + sizeof(time_t);
 	}
 };
 
@@ -48,6 +75,36 @@ struct RideRequestMessage {
 		  pickup_longitude(p_lon),
 		  destination_latitude(d_lat),
 		  destination_longitude(d_lon) {}
+
+	void Marshal(char *buffer) {
+		int offset = 0;
+		memcpy(buffer + offset, &request_id, sizeof(int));
+		offset += sizeof(int);
+		memcpy(buffer + offset, &pickup_latitude, sizeof(float));
+		offset += sizeof(float);
+		memcpy(buffer + offset, &pickup_longitude, sizeof(float));
+		offset += sizeof(float);
+		memcpy(buffer + offset, &destination_latitude, sizeof(float));
+		offset += sizeof(float);
+		memcpy(buffer + offset, &destination_longitude, sizeof(float));
+	}
+
+	void Unmarshal(char *buffer) {
+		int offset = 0;
+		memcpy(&request_id, buffer + offset, sizeof(int));
+		offset += sizeof(int);
+		memcpy(&pickup_latitude, buffer + offset, sizeof(float));
+		offset += sizeof(float);
+		memcpy(&pickup_longitude, buffer + offset, sizeof(float));
+		offset += sizeof(float);
+		memcpy(&destination_latitude, buffer + offset, sizeof(float));
+		offset += sizeof(float);
+		memcpy(&destination_longitude, buffer + offset, sizeof(float));
+	}
+
+	static constexpr int Size() {
+		return sizeof(int) + 4 * sizeof(float);
+	}
 };
 
 // Acknowledgment message structure
@@ -61,6 +118,28 @@ struct AcknowledgmentMessage {
 
 	AcknowledgmentMessage(int req_id, int drv_id, bool acc)
 		: request_id(req_id), driver_id(drv_id), accepted(acc) {}
+
+	void Marshal(char *buffer) {
+		int offset = 0;
+		memcpy(buffer + offset, &request_id, sizeof(int));
+		offset += sizeof(int);
+		memcpy(buffer + offset, &driver_id, sizeof(int));
+		offset += sizeof(int);
+		memcpy(buffer + offset, &accepted, sizeof(bool));
+	}
+
+	void Unmarshal(char *buffer) {
+		int offset = 0;
+		memcpy(&request_id, buffer + offset, sizeof(int));
+		offset += sizeof(int);
+		memcpy(&driver_id, buffer + offset, sizeof(int));
+		offset += sizeof(int);
+		memcpy(&accepted, buffer + offset, sizeof(bool));
+	}
+
+	static constexpr int Size() {
+		return sizeof(int) + sizeof(int) + sizeof(bool);
+	}
 };
 
 #endif // end of #ifndef __MESSAGES_H__
