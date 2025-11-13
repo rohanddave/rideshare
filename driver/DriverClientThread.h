@@ -4,6 +4,7 @@
 #include <chrono>
 #include <ctime>
 #include <string>
+#include <thread>
 
 #include "DriverClientStub.h"
 
@@ -13,6 +14,10 @@ class DriverClientThread {
 public:
 	DriverClientThread();
 	void ThreadBody(std::string ip, int port, int id);
+
+	// Two separate thread functions
+	void HeartbeatThread();
+	void RequestHandlerThread();
 };
 
 

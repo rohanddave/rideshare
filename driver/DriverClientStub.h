@@ -3,17 +3,31 @@
 
 #include <string>
 #include "DriverSocket.h"
+#include "Messages.h"
 
 class DriverClientStub {
 private:
-	DriverSocket socket;
-	int id; 
+	DriverSocket heartbeat_socket;
+	DriverSocket request_socket;
+	int id;
 	std::string name;
 	float latitude;
 	float longitude;
 public:
 	DriverClientStub();
-	int Init(std::string server_ip, int server_port);
+
+	// Initialize both socket connections
+	int InitHeartbeatConnection(std::string server_ip, int server_port);
+	int InitRequestConnection(std::string server_ip, int server_port);
+
+	// Heartbeat operations (fire-and-forget)
+	bool SendHeartbeat();
+
+	// Ride request operations (blocking)
+	RideRequestMessage ReceiveRideRequest();
+	bool SendAcknowledgment(int request_id, bool accepted);
+
+	// Getters and setters
 	int GetID();
 	void SetID(int driver_id) { id = driver_id; }
 	std::string GetName();
