@@ -21,3 +21,16 @@ int DriverClientStub::GetID() {
 std::string DriverClientStub::GetName() {
 	return name;
 }
+
+float DriverClientStub::GetLatitude() {
+	return latitude;
+}
+
+float DriverClientStub::GetLongitude() {
+	return longitude;
+}
+
+void DriverClientStub::SetLocation(float lat, float lon) {
+	latitude = lat;
+	longitude = lon;
+}

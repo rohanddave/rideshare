@@ -9,11 +9,16 @@ private:
 	DriverSocket socket;
 	int id; 
 	std::string name;
+	float latitude;
+	float longitude;
 public:
 	DriverClientStub();
 	int Init(std::string server_ip, int server_port);
 	int GetID();
 	std::string GetName();
+	float GetLatitude();
+	float GetLongitude();
+	void SetLocation(float lat, float lon);
 };
 
 
