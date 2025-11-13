@@ -15,6 +15,7 @@ public:
 	DriverClientStub();
 	int Init(std::string server_ip, int server_port);
 	int GetID();
+	void SetID(int driver_id) { id = driver_id; }
 	std::string GetName();
 	float GetLatitude();
 	float GetLongitude();
